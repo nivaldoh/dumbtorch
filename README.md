@@ -15,18 +15,14 @@ Minimal PyTorch replica for learning purposes
 
 # Roadmap
 
-## Phase 1: Core Tensor Implementation (CPU)
-1. Basic Tensor Class
-   - Memory management with RAII principles
-   - Data storage and access patterns
-   - Basic shape handling
-   - Data type support (starting with float32)
+## Phase 1: Core Tensor Implementation (CPU, no parallellism)
+1. Tensors
 
-2. Essential Operations
-   - Element-wise operations (add, subtract, multiply, divide)
-   - Reduction operations (sum, mean)
+2. Basic ops
+   - Element-wise (add, subtract, multiply, divide)
+   - Reduction (sum, mean)
    - Shape manipulation (reshape, transpose)
-   - Broadcasting implementation
+   - Broadcasting
 
 3. Memory Management
    - Smart pointer implementation
@@ -107,18 +103,10 @@ Minimal PyTorch replica for learning purposes
    - Integration tests
    - Performance benchmarks
 
-## Phase 6: Documentation and Examples
-1. API Documentation
-   - C++ API documentation
-   - Python API documentation
-   - Implementation notes
-   - Architecture overview
+## Extras
+1. Add examples
 
-2. Examples and Tutorials
-   - Basic tensor operations
-   - Simple neural networks
-   - Training examples
-   - CUDA acceleration demos
+2. Add parallelism for CPU operations
 
 
 # Project Structure

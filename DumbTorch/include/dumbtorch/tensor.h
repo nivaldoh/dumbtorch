@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <stdexcept>
 
 namespace dumbtorch {
 
@@ -74,6 +75,17 @@ namespace dumbtorch {
         // Helper methods
         int64_t calculateSize() const;
         void allocateMemory();
+
+        // Static helpers
+        static size_t getSizeOfDType(DType dtype) {
+            switch (dtype) {
+            case DType::Float32: return sizeof(float);
+            case DType::Float64: return sizeof(double);
+            case DType::Int32: return sizeof(int32_t);
+            case DType::Int64: return sizeof(int64_t);
+            default: throw std::runtime_error("Unknown dtype");
+            }
+        }
     };
 
 } // namespace dumbtorch

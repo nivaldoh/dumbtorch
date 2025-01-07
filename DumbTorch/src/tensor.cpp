@@ -1,5 +1,5 @@
 #include "dumbtorch/tensor.h"
-#include <stdexcept>
+#include "dumbtorch/ops/basic_ops.h"
 #include <sstream>
 #include <cstring>
 
@@ -142,6 +142,23 @@ namespace dumbtorch {
         oss << ")";
 
         return oss.str();
+    }
+
+    // Operator overloads
+    Tensor Tensor::operator+(const Tensor& other) const {
+        return ops::add(*this, other);
+    }
+
+    Tensor Tensor::operator-(const Tensor& other) const {
+        return ops::subtract(*this, other);
+    }
+
+    Tensor Tensor::operator*(const Tensor& other) const {
+        return ops::multiply(*this, other);
+    }
+
+    Tensor Tensor::operator/(const Tensor& other) const {
+        return ops::divide(*this, other);
     }
 
 } // namespace dumbtorch
