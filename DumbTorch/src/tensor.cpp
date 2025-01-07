@@ -1,36 +1,11 @@
 #include "dumbtorch/tensor.h"
 #include "dumbtorch/ops/basic_ops.h"
+#include <stdexcept>
 #include <sstream>
-#include <cstring>
 
 namespace dumbtorch {
 
-    template<typename T>
-    Tensor::Tensor(const std::vector<T>& data, const std::vector<int64_t>& shape,
-        DType dtype, DeviceType device)
-        : shape_(shape), dtype_(dtype), device_(device) {
-
-        int64_t expected_size = calculateSize();
-        if (data.size() != expected_size) {
-            throw std::invalid_argument("Data size doesn't match shape");
-        }
-
-        // Allocate memory and copy data
-        size_t byte_size = expected_size * sizeof(T);
-        data_ = std::shared_ptr<void>(
-            malloc(byte_size),
-            [](void* ptr) { free(ptr); }
-        );
-
-        if (device_ == DeviceType::CPU) {
-            std::memcpy(data_.get(), data.data(), byte_size);
-        }
-        else {
-            // TODO: Implement CUDA memory allocation and copy
-            throw std::runtime_error("CUDA not implemented yet");
-        }
-    }
-
+    // Constructor for zero-initialized tensor
     Tensor::Tensor(const std::vector<int64_t>& shape, DType dtype, DeviceType device)
         : shape_(shape), dtype_(dtype), device_(device) {
 
@@ -83,6 +58,9 @@ namespace dumbtorch {
         other.device_ = DeviceType::CPU;
         other.requires_grad_ = false;
     }
+
+    // Destructor
+    Tensor::~Tensor() = default;
 
     // Helper methods
     int64_t Tensor::calculateSize() const {
@@ -144,7 +122,7 @@ namespace dumbtorch {
         return oss.str();
     }
 
-    // Operator overloads
+    // Basic operations
     Tensor Tensor::operator+(const Tensor& other) const {
         return ops::add(*this, other);
     }
@@ -159,6 +137,10 @@ namespace dumbtorch {
 
     Tensor Tensor::operator/(const Tensor& other) const {
         return ops::divide(*this, other);
+    }
+
+    void Tensor::setRequiresGrad(bool requires_grad) {
+        requires_grad_ = requires_grad;
     }
 
 } // namespace dumbtorch

@@ -24,8 +24,8 @@ target_include_directories(dumbtorch
 target_link_libraries(dumbtorch PRIVATE ${CUDA_LIBRARIES})
 
 # Optional: Create an executable for testing/development
-add_executable(dumbtorch_app "src/DumbTorch.cpp")
-target_link_libraries(dumbtorch_app PRIVATE dumbtorch)
+#add_executable(dumbtorch_app "src/DumbTorch.cpp")
+#target_link_libraries(dumbtorch_app PRIVATE dumbtorch)
 
 # Python bindings (if enabled)
 #if(DUMBTORCH_BUILD_PYTHON)

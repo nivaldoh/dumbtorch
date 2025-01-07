@@ -20,3 +20,7 @@ option(DUMBTORCH_BUILD_PYTHON "Build Python bindings" ON)
 
 # Include sub-projects
 add_subdirectory(DumbTorch)
+
+# Enable testing
+enable_testing()
+include(CTest)

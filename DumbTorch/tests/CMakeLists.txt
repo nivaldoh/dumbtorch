@@ -1,5 +1,5 @@
 # Enable testing
-enable_testing()
+# enable_testing()
 
 # Use FetchContent for GoogleTest
 include(FetchContent)
@@ -13,10 +13,18 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Collect test source files
+#file(GLOB_RECURSE TEST_SOURCES 
+    #"*.cpp"
+    #"*.cu"
+#)
+
+# Collect test source files - be explicit about where we look
 file(GLOB_RECURSE TEST_SOURCES 
-    "*.cpp"
-    "*.cu"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cu"
 )
+# Print what we found (for debugging)
+message(STATUS "Test sources: ${TEST_SOURCES}")
 
 # Create test executable
 add_executable(dumbtorch_tests ${TEST_SOURCES})

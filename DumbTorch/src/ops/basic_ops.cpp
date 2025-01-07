@@ -5,65 +5,6 @@
 
 namespace dumbtorch {
     namespace ops {
-        namespace detail {
-
-            template<typename T>
-            void add_impl(const T* a, const T* b, T* out, size_t size) {
-                for (size_t i = 0; i < size; ++i) {
-                    out[i] = a[i] + b[i];
-                }
-            }
-
-            template<typename T>
-            void subtract_impl(const T* a, const T* b, T* out, size_t size) {
-                for (size_t i = 0; i < size; ++i) {
-                    out[i] = a[i] - b[i];
-                }
-            }
-
-            template<typename T>
-            void multiply_impl(const T* a, const T* b, T* out, size_t size) {
-                for (size_t i = 0; i < size; ++i) {
-                    out[i] = a[i] * b[i];
-                }
-            }
-
-            template<typename T>
-            void divide_impl(const T* a, const T* b, T* out, size_t size) {
-                for (size_t i = 0; i < size; ++i) {
-                    if (b[i] == 0) {
-                        throw std::runtime_error("Division by zero");
-                    }
-                    out[i] = a[i] / b[i];
-                }
-            }
-
-            // Explicit template instantiations for supported types
-            // Addition
-            template void add_impl<float>(const float*, const float*, float*, size_t);
-            template void add_impl<double>(const double*, const double*, double*, size_t);
-            template void add_impl<int32_t>(const int32_t*, const int32_t*, int32_t*, size_t);
-            template void add_impl<int64_t>(const int64_t*, const int64_t*, int64_t*, size_t);
-            
-            // Subtraction
-            template void subtract_impl<float>(const float*, const float*, float*, size_t);
-            template void subtract_impl<double>(const double*, const double*, double*, size_t);
-            template void subtract_impl<int32_t>(const int32_t*, const int32_t*, int32_t*, size_t);
-            template void subtract_impl<int64_t>(const int64_t*, const int64_t*, int64_t*, size_t);
-
-            // Multiplication
-            template void multiply_impl<float>(const float*, const float*, float*, size_t);
-            template void multiply_impl<double>(const double*, const double*, double*, size_t);
-            template void multiply_impl<int32_t>(const int32_t*, const int32_t*, int32_t*, size_t);
-            template void multiply_impl<int64_t>(const int64_t*, const int64_t*, int64_t*, size_t);
-
-            // Division
-            template void divide_impl<float>(const float*, const float*, float*, size_t);
-            template void divide_impl<double>(const double*, const double*, double*, size_t);
-            template void divide_impl<int32_t>(const int32_t*, const int32_t*, int32_t*, size_t);
-            template void divide_impl<int64_t>(const int64_t*, const int64_t*, int64_t*, size_t);
-
-        } // namespace detail
 
         bool are_shapes_compatible(
             const std::vector<int64_t>& shape1,
@@ -146,29 +87,28 @@ namespace dumbtorch {
         Tensor add(const Tensor& a, const Tensor& b) {
             switch (a.getDType()) {
             case DType::Float32:
-                return binary_op<float>(a, b, detail::add_impl<float>);
+                return binary_op(a, b, detail::add_impl<float>);
             case DType::Float64:
-                return binary_op<double>(a, b, detail::add_impl<double>);
+                return binary_op(a, b, detail::add_impl<double>);
             case DType::Int32:
-                return binary_op<int32_t>(a, b, detail::add_impl<int32_t>);
+                return binary_op(a, b, detail::add_impl<int32_t>);
             case DType::Int64:
-                return binary_op<int64_t>(a, b, detail::add_impl<int64_t>);
+                return binary_op(a, b, detail::add_impl<int64_t>);
             default:
                 throw std::runtime_error("Unsupported dtype");
             }
         }
 
-        // Similar changes for subtract, multiply, and divide
         Tensor subtract(const Tensor& a, const Tensor& b) {
             switch (a.getDType()) {
             case DType::Float32:
-                return binary_op<float>(a, b, detail::subtract_impl<float>);
+                return binary_op(a, b, detail::subtract_impl<float>);
             case DType::Float64:
-                return binary_op<double>(a, b, detail::subtract_impl<double>);
+                return binary_op(a, b, detail::subtract_impl<double>);
             case DType::Int32:
-                return binary_op<int32_t>(a, b, detail::subtract_impl<int32_t>);
+                return binary_op(a, b, detail::subtract_impl<int32_t>);
             case DType::Int64:
-                return binary_op<int64_t>(a, b, detail::subtract_impl<int64_t>);
+                return binary_op(a, b, detail::subtract_impl<int64_t>);
             default:
                 throw std::runtime_error("Unsupported dtype");
             }
@@ -177,13 +117,13 @@ namespace dumbtorch {
         Tensor multiply(const Tensor& a, const Tensor& b) {
             switch (a.getDType()) {
             case DType::Float32:
-                return binary_op<float>(a, b, detail::multiply_impl<float>);
+                return binary_op(a, b, detail::multiply_impl<float>);
             case DType::Float64:
-                return binary_op<double>(a, b, detail::multiply_impl<double>);
+                return binary_op(a, b, detail::multiply_impl<double>);
             case DType::Int32:
-                return binary_op<int32_t>(a, b, detail::multiply_impl<int32_t>);
+                return binary_op(a, b, detail::multiply_impl<int32_t>);
             case DType::Int64:
-                return binary_op<int64_t>(a, b, detail::multiply_impl<int64_t>);
+                return binary_op(a, b, detail::multiply_impl<int64_t>);
             default:
                 throw std::runtime_error("Unsupported dtype");
             }
@@ -192,13 +132,13 @@ namespace dumbtorch {
         Tensor divide(const Tensor& a, const Tensor& b) {
             switch (a.getDType()) {
             case DType::Float32:
-                return binary_op<float>(a, b, detail::divide_impl<float>);
+                return binary_op(a, b, detail::divide_impl<float>);
             case DType::Float64:
-                return binary_op<double>(a, b, detail::divide_impl<double>);
+                return binary_op(a, b, detail::divide_impl<double>);
             case DType::Int32:
-                return binary_op<int32_t>(a, b, detail::divide_impl<int32_t>);
+                return binary_op(a, b, detail::divide_impl<int32_t>);
             case DType::Int64:
-                return binary_op<int64_t>(a, b, detail::divide_impl<int64_t>);
+                return binary_op(a, b, detail::divide_impl<int64_t>);
             default:
                 throw std::runtime_error("Unsupported dtype");
             }

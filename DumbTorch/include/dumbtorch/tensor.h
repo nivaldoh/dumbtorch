@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <cstring>
 #include <stdexcept>
 
 namespace dumbtorch {
@@ -30,7 +31,29 @@ namespace dumbtorch {
         // Create tensor from raw data
         template<typename T>
         Tensor(const std::vector<T>& data, const std::vector<int64_t>& shape,
-            DType dtype = DType::Float32, DeviceType device = DeviceType::CPU);
+            DType dtype = DType::Float32, DeviceType device = DeviceType::CPU)
+            : shape_(shape), dtype_(dtype), device_(device) {
+
+            int64_t expected_size = calculateSize();
+            if (data.size() != expected_size) {
+                throw std::invalid_argument("Data size doesn't match shape");
+            }
+
+            // Allocate memory and copy data
+            size_t byte_size = expected_size * sizeof(T);
+            data_ = std::shared_ptr<void>(
+                malloc(byte_size),
+                [](void* ptr) { free(ptr); }
+            );
+
+            if (device_ == DeviceType::CPU) {
+                std::memcpy(data_.get(), data.data(), byte_size);
+            }
+            else {
+                // TODO: Implement CUDA memory allocation and copy
+                throw std::runtime_error("CUDA not implemented yet");
+            }
+        }
 
         // Create tensor with given shape, initialized to zeros
         Tensor(const std::vector<int64_t>& shape, DType dtype = DType::Float32,
@@ -59,22 +82,9 @@ namespace dumbtorch {
 
         // Data access
         template<typename T>
-        T* getData() const;
-
-    private:
-        // Internal data representation
-        std::shared_ptr<void> data_;
-        std::vector<int64_t> shape_;
-        DType dtype_ = DType::Float32;
-        DeviceType device_ = DeviceType::CPU;
-
-        // Autograd-related members
-        bool requires_grad_ = false;
-        std::shared_ptr<AutogradContext> grad_ctx_;
-
-        // Helper methods
-        int64_t calculateSize() const;
-        void allocateMemory();
+        T* getData() const {
+            return static_cast<T*>(data_.get());
+        }
 
         // Static helpers
         static size_t getSizeOfDType(DType dtype) {
@@ -86,6 +96,21 @@ namespace dumbtorch {
             default: throw std::runtime_error("Unknown dtype");
             }
         }
+
+    private:
+        // Internal data representation
+        std::shared_ptr<void> data_;  // Using void* to handle different data types
+        std::vector<int64_t> shape_;
+        DType dtype_ = DType::Float32;
+        DeviceType device_ = DeviceType::CPU;
+
+        // Autograd-related members
+        bool requires_grad_ = false;
+        std::shared_ptr<AutogradContext> grad_ctx_;
+
+        // Helper methods
+        int64_t calculateSize() const;
+        void allocateMemory();
     };
 
 } // namespace dumbtorch
